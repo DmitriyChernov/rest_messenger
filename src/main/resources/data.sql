@@ -48,7 +48,7 @@ INSERT INTO user_conversation (conversation_id, user_id) VALUES
 (2, 3),
 (2, 2);
 
---INSERT INTO message (text, conversation_id, user_id) VALUES
---('privet', 1, 1),
---('kak dela', 2, 3),
---('bratka', 2, 2) ;
+INSERT INTO message (text, conversation_id, user_id) VALUES
+('privet', 1, 1),
+('kak dela', 2, 3),
+('bratka', 2, 2) ;

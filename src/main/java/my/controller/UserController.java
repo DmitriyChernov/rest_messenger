@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +25,7 @@ public class UserController {
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
     public List <User> getAllUsers() {
-        List<User> users =  userRepository.findAll();
-        return  users;
+        return userRepository.findAll();
     }
 
     @RequestMapping(value = "/user/{id}",
@@ -42,15 +43,19 @@ public class UserController {
             method = RequestMethod.POST,
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User savedUser = userRepository.save(user);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(savedUser.getId()).toUri();
+
+        return ResponseEntity.created(location).body(savedUser);
     }
 
     @RequestMapping(value = "/user/{id}",
             method = RequestMethod.PUT,
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
-    public ResponseEntity <User> updateUser(@PathVariable(value = "id") Long userId,
+    public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long userId,
                                             @RequestBody User userDetails) throws ResourceNotFoundException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("user not found for this id :: " + userId));

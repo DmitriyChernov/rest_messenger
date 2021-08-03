@@ -22,9 +22,6 @@ public class GetConversationInfoController {
     @Autowired
     private UserConversationRepository userConversationRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     @RequestMapping(value = "/get_conversation_info/conversation_id={id}",
             method = RequestMethod.GET,
             produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -33,16 +30,11 @@ public class GetConversationInfoController {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new ResourceNotFoundException("conversation not found for this id :: " + conversationId));
 
-        User owner = userRepository.findById(conversation.getOwner().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("owner not found for this id :: " + conversationId));
-
         List<UserConversation> userConversations = userConversationRepository.findByConversationId(conversationId)
                 .orElseThrow(() -> new ResourceNotFoundException("users not found for this id :: " + conversationId));
 
-        List<User> users = userConversations.stream().map( uc -> uc.getUser()).collect(Collectors.toList());
+        List<User> users = userConversations.stream().map(UserConversation::getUser).collect(Collectors.toList());
 
-        ConversationInfo conversationInfo = new ConversationInfo(conversationId, conversation.getName(), users, owner);
-
-        return conversationInfo;
+        return new ConversationInfo(conversation, users);
     }
 }

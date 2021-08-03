@@ -31,11 +31,7 @@ public class ConversationController {
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
     public List<Conversation> getAllConversations() {
-        List<Conversation> conversations =  conversationRepository.findAll();
-        for (Conversation conv : conversations) {
-            System.out.println(conv);
-        }
-        return conversations;
+        return conversationRepository.findAll();
     }
 
     @RequestMapping(value = "/conversation/{id}",
@@ -54,7 +50,6 @@ public class ConversationController {
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
     public ResponseEntity<Conversation> createConversation(@RequestBody Conversation conversation) {
-        System.out.println(conversation);
         Optional<User> optionalUser = userRepository.findById(conversation.getOwner().getId());
         if (!optionalUser.isPresent()) {
             return ResponseEntity.unprocessableEntity().build();
