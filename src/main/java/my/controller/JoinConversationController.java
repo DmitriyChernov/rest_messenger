@@ -45,8 +45,6 @@ public class JoinConversationController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("user not found for this id :: " + conversationId));
 
-        UserConversation newUC = new UserConversation(user, conversation);
-
         if (userConversationRepository.findByConversationId(conversationId).orElse(null).stream().anyMatch(uc -> uc.getUser().equals(user))) {
             throw new ResourceExists("user conversation for conversation id :: " + conversationId + "; user id :: " + userId + " already exists!");
         }
